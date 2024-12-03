@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowd Monitoring Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.6.1/dist/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Crowd Monitoring Dashboard</h1>
+
+    <!-- Live Camera Feed -->
+    <h2>Live Camera Feed</h2>
+    <img src="/video_feed" alt="Camera Feed" id="camera-feed">
+
+    <!-- Real-Time Updates -->
+    <h2>Density Updates</h2>
+    <div id="density-updates">
+        <p>Waiting for updates...</p>
+    </div>
+
+    <script>
+        // Connect to the server via Socket.IO
+        const socket = io();
+
+        // Listen for density updates
+        socket.on('density_update', (data) => {
+            const updatesDiv = document.getElementById('density-updates');
+            updatesDiv.innerHTML = `<p><strong>Density:</strong> ${data.density}</p>
+                                     <p><strong>People Count:</strong> ${data.peopleCount}</p>`;
+        });
+
+        // Request density updates every 2 seconds
+        setInterval(() => {
+            socket.emit('get_density');
+        }, 2000);
+    </script>
+</body>
+</html>
